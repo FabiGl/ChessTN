@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Chess.AI">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAACACAAAAAAAAAAQAABAAAQIAAgAAAAAAA=</HashCode>
+      <FileName>AI.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Chess.Board" Collapsed="true">
+    <Position X="2" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAgAAQiCAAAhAQAIEEAAAITEQAAQEBAgCAAAACg=</HashCode>
+      <FileName>Board.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Chess.BoardRepresentation">
+    <Position X="8" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAAAAAAF+wAAAAAAIAAAAAAAAAIQAMBoHwAAAAA=</HashCode>
+      <FileName>BoardRepresentation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Chess.Coord">
+    <Position X="9.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAUAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Coord.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Chess.FenNotation">
+    <Position X="0.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAACAAEAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FenNotation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Chess.LoadedPositionInfo">
+    <Position X="3.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAAAAAAAAAAAAEAAIICEQAIAAAAAAAAAAAA=</HashCode>
+      <FileName>FenNotation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Chess.Move">
+    <Position X="9.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAAAAABAAAAABAAEAIEAAAAAAAAA=</HashCode>
+      <FileName>Move.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Chess.MoveGenerator">
+    <Position X="8" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAgACAAICAAAAAAAAAAAAAQAUAAAAQAAIAAIBAAAAAA=</HashCode>
+      <FileName>MoveGenerator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Chess.Piece">
+    <Position X="6.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>wACEAAAAIAEggAAAAEAAAAQABAAAABiACEAIwAEAAAA=</HashCode>
+      <FileName>Piece.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Chess.PrecomputedData">
+    <Position X="6.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAIAgAAAAAIAAAAAAAQAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>PrecomputedData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Chess.Program">
+    <Position X="6.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Chess.PromotionInterface">
+    <Position X="5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AkAQAAAAECAAAAgEAASAAAECAgAAAAAAYAAAQRAAAAA=</HashCode>
+      <FileName>PromotionInterface.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Chess.SettingsMenu">
+    <Position X="5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAABAAAICAAAACAAgAAAAgAAAACAAAAAA=</HashCode>
+      <FileName>SettingsMenu.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Chess.Menu">
+    <Position X="3.5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAgAAAAAADACAACAAgAAAAAgAQgAAAAAAA=</HashCode>
+      <FileName>Menu.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Chess.MatchRecapInterface">
+    <Position X="2" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAIAABACAAAgCAAAAAAAAAAIAgAAAACA=</HashCode>
+      <FileName>MatchRecapInterface.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Chess.GameWindow">
+    <Position X="0.5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABIAAACIQQACEARCBAACiAgDIBgAIAASCBAcTFAI=</HashCode>
+      <FileName>GameWindow.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

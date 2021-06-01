@@ -4,9 +4,9 @@ namespace Chess
 {
 	public class Move
 	{
-		readonly int startSquare = 0;
-		readonly int targetSquare = 0;
-		public int type = 0; // 0 = Move; 1 = Capture; 2 = Doublemove; 3 = EP-Capture; 4 = Castle; 5 = Promotion
+		public readonly int startSquare = 0;
+		public readonly int targetSquare = 0;
+		public int type = 0; // 0 = Move; 1 = Capture; 2 = Doublemove; 3 = EP-Capture; 4 = Castle; 5 = Promotion; 6 = KingMove
 		Board board;
 		
 		public Move(int start, int target, Board b)
@@ -40,6 +40,16 @@ namespace Chess
         {
 			if (Piece.IsType(board.squares[startSquare], Piece.Pawn) && (targetSquare - 16 == startSquare) || (targetSquare + 16 == startSquare))
 				type = 2;
+        }
+		/*public void IsCastle()
+        {
+			if (Piece.IsType(board.squares[startSquare], Piece.King) && Piece.IsType(board.squares[targetSquare], Piece.None) && (targetSquare + 1 != startSquare && targetSquare - 1 != startSquare))
+				type = 4;
+        }*/
+		public void IsPromotion()
+        {
+			if (Piece.IsType(board.squares[startSquare], Piece.Pawn) && (targetSquare > 55 || targetSquare < 8))
+				type = 5;
         }
 	}
 }

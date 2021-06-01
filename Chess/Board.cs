@@ -20,6 +20,8 @@ namespace Chess
         public int ColorToMove;
         public int OpponentColor;
 
+        public int[] kingSquares = new int[2];
+
         public bool WhiteKCastleRights = true;
         public bool BlackKCastleRights = true;
         public bool WhiteQCastleRights = true;
@@ -27,6 +29,8 @@ namespace Chess
 
         public int plyCount = 0;
         public int epFile;
+
+        AI adversary;
 
         GameWindow gW;
 
@@ -42,6 +46,17 @@ namespace Chess
             DrawBoard();
             PrecomputedData.ComputeData();
             this.gW = gW;
+            int index = 0;
+            foreach (int i in squares)
+            {
+                if (i == (Piece.King | Piece.White))
+                    kingSquares[0] = index;
+                else if (i == (Piece.King | Piece.Black))
+                    kingSquares[1] = index;
+                index++;
+            }
+            adversary = new AI(this);
+
         }
         public void LoadStartFen()
         {
@@ -95,74 +110,91 @@ namespace Chess
             {
                 move.IsCapture();
                 move.IsDoubleMove();
-                switch (move.type)
-                {
-                    case 0:
-                        ExecuteMovement(start, target);
-                        break;
-                    case 1:
-                        Capture(start, target);
-                        break;
-                    case 2:
-                        ExecuteDoubleMovement(start, target);
-                        break;
-                    case 3:
-                        EPCapture(start, target);
-                        break;
-                    case 4:
-                        Castle(start, target);
-                        break;
-                    case 5:
-                        Promote(start, target);
-                        break;
-                    default:
-                        break;
-                }
+                PlayMove(ref squares, move, true);
                 whiteToMove = !whiteToMove;
                 OpponentColor = OpponentColor ^ Piece.colorMask;
                 ColorToMove = ColorToMove ^ Piece.colorMask;
                 plyCount++;
 
-                gW.UpdateOther(BoardRepresentation.CoordFromIndex(start), BoardRepresentation.CoordFromIndex(target));
+                UpdateGW(start, target);
+
+                if (gW.mode == 1 && ColorToMove == Piece.Black)
+                    adversary.PlayMove();
 
                 return 0;
             }
             return 1;
         }
-
-        public void ExecuteMovement(int start, int target)
+        public void UpdateGW(int start, int target)
         {
-            if(squares[start] == (Piece.King | Piece.White))
+            gW.UpdateOther(BoardRepresentation.CoordFromIndex(start), BoardRepresentation.CoordFromIndex(target));
+        }
+        public void PlayMove(ref int[] board, Move move, bool realMove)
+        {
+            switch (move.type)
+            {
+                case 0:
+                    ExecuteMovement(move.startSquare, move.targetSquare, board, realMove);
+                    break;
+                case 1:
+                    Capture(move.startSquare, move.targetSquare, board, realMove);
+                    break;
+                case 2:
+                    ExecuteDoubleMovement(move.startSquare, move.targetSquare, board, realMove);
+                    break;
+                case 3:
+                    EPCapture(move.startSquare, move.targetSquare, board, realMove);
+                    break;
+                case 4:
+                    Castle(move.startSquare, move.targetSquare, board, realMove);
+                    break;
+                case 5:
+                    Promote(move.startSquare, move.targetSquare, board, realMove);
+                    break;
+                case 6:
+                    ExecuteMovement(move.startSquare, move.targetSquare, board, realMove);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void ExecuteMovement(int start, int target, int[] squares, bool realMove)
+        {
+            if (squares[start] == (Piece.King | Piece.White) && realMove)
             {
                 WhiteKCastleRights = false;
                 WhiteQCastleRights = false;
+                kingSquares[0] = target;
             }
-            else if (squares[start] == (Piece.King | Piece.Black))
+            else if (squares[start] == (Piece.King | Piece.Black) && realMove)
             {
                 BlackKCastleRights = false;
                 BlackQCastleRights = false;
+                kingSquares[1] = target;
             }
-            else if (start == 0 && Piece.IsType(squares[start], (Piece.Rook | Piece.White)))
+            else if (start == 0 && Piece.IsType(squares[start], (Piece.Rook | Piece.White)) && realMove)
                 WhiteQCastleRights = false;
-            else if (start == 7 && Piece.IsType(squares[start], (Piece.Rook | Piece.White)))
+            else if (start == 7 && Piece.IsType(squares[start], (Piece.Rook | Piece.White)) && realMove)
                 WhiteKCastleRights = false;
-            else if (start == 56 && Piece.IsType(squares[start], (Piece.Rook | Piece.Black)))
+            else if (start == 56 && Piece.IsType(squares[start], (Piece.Rook | Piece.Black)) && realMove)
                 WhiteQCastleRights = false;
-            else if (start == 63 && Piece.IsType(squares[start], (Piece.Rook | Piece.Black)))
+            else if (start == 63 && Piece.IsType(squares[start], (Piece.Rook | Piece.Black)) && realMove)
                 WhiteKCastleRights = false;
             squares[target] = squares[start];
             squares[start] = Piece.None;
             epFile = -1;
         }
-        public void ExecuteDoubleMovement(int start, int target)
+        public void ExecuteDoubleMovement(int start, int target, int[] squares, bool realMove)
         {
             squares[target] = squares[start];
             squares[start] = Piece.None;
-            epFile = whiteToMove ? target - 8 : target + 8;
+            if (realMove)
+                epFile = whiteToMove ? target - 8 : target + 8;
         }
-        public void Capture(int start, int target)
+        public void Capture(int start, int target, int[] squares, bool realMove)
         {
-            if (whiteToMove)
+            if (whiteToMove && realMove)
             {
                 switch (Piece.PieceType(squares[target]))
                 {
@@ -183,7 +215,7 @@ namespace Chess
                         break;
                 }
             }
-            else
+            else if (realMove)
             {
                 switch (Piece.PieceType(squares[target]))
                 {
@@ -204,27 +236,29 @@ namespace Chess
                         break;
                 }
             }
-            if (squares[start] == (Piece.King | Piece.White))
+            if (squares[start] == (Piece.King | Piece.White) && realMove)
             {
                 WhiteKCastleRights = false;
                 WhiteQCastleRights = false;
+                kingSquares[0] = target;
             }
-            else if (squares[start] == (Piece.King | Piece.Black))
+            else if (squares[start] == (Piece.King | Piece.Black) && realMove)
             {
                 BlackKCastleRights = false;
                 BlackQCastleRights = false;
+                kingSquares[1] = target;
             }
-            else if (start == 0 && Piece.IsType(squares[start], (Piece.Rook | Piece.White)))
+            else if (start == 0 && Piece.IsType(squares[start], (Piece.Rook | Piece.White)) && realMove)
                 WhiteQCastleRights = false;
-            else if (start == 7 && Piece.IsType(squares[start], (Piece.Rook | Piece.White)))
+            else if (start == 7 && Piece.IsType(squares[start], (Piece.Rook | Piece.White)) && realMove)
                 WhiteKCastleRights = false;
-            else if (start == 56 && Piece.IsType(squares[start], (Piece.Rook | Piece.Black)))
+            else if (start == 56 && Piece.IsType(squares[start], (Piece.Rook | Piece.Black)) && realMove)
                 WhiteQCastleRights = false;
-            else if (start == 63 && Piece.IsType(squares[start], (Piece.Rook | Piece.Black)))
+            else if (start == 63 && Piece.IsType(squares[start], (Piece.Rook | Piece.Black)) && realMove)
                 WhiteKCastleRights = false;
 
             gW.UpdateCaptures();
-            if (squares[target] == (Piece.King | OpponentColor))
+            if (squares[target] == (Piece.King | OpponentColor) && realMove)
             {
                 if (whiteToMove)
                     gW.MatchRecap('w');
@@ -236,15 +270,15 @@ namespace Chess
             squares[start] = Piece.None;
             epFile = -1;
         }
-        public void EPCapture(int start, int target)
+        public void EPCapture(int start, int target, int[] squares, bool realMove)
         {
             squares[target] = squares[start];
-            if (whiteToMove)
+            if (whiteToMove && realMove)
             {
                 gW.wPawnsV++;
                 squares[target - 8] = Piece.None;
             }
-            else if (!whiteToMove)
+            else if (!whiteToMove && realMove)
             {
                 gW.bPawnsV++;
                 squares[target + 8] = Piece.None;
@@ -252,14 +286,14 @@ namespace Chess
             squares[start] = Piece.None;
             epFile = -1;
         }
-        public void Castle(int start, int target)
+        public void Castle(int start, int target, int[] squares, bool realMove)
         {
-            if (whiteToMove)
+            if (whiteToMove && realMove)
             {
                 WhiteKCastleRights = false;
                 WhiteQCastleRights = false;
             }
-            else
+            else if (realMove)
             {
                 BlackKCastleRights = false;
                 BlackQCastleRights = false;
@@ -291,29 +325,42 @@ namespace Chess
                     squares[start] = Piece.None;
                     break;
             }
-            epFile = -1;
+            if (realMove)
+                epFile = -1;
         }
-        public void Promote(int start, int target)
+        public void Promote(int start, int target, int[] squares, bool realMove)
         {
-            Form PI = new PromotionInterface(this);
-            PI.ShowDialog();
-            switch (promotionChoice)
+            if (realMove)
             {
-                case Piece.Queen:
+                if (gW.mode != 1 || whiteToMove)
+                {
+                    Form PI = new PromotionInterface(this);
+                    PI.ShowDialog();
+                    switch (promotionChoice)
+                    {
+                        case Piece.Queen:
+                            squares[target] = Piece.Queen | ColorToMove;
+                            break;
+                        case Piece.Rook:
+                            squares[target] = Piece.Rook | ColorToMove;
+                            break;
+                        case Piece.Knight:
+                            squares[target] = Piece.Knight | ColorToMove;
+                            break;
+                        case Piece.Bishop:
+                            squares[target] = Piece.Bishop | ColorToMove;
+                            break;
+                    }
+                    squares[start] = Piece.None;
+                    epFile = -1;
+                }
+                else
+                {
                     squares[target] = Piece.Queen | ColorToMove;
-                    break;
-                case Piece.Rook:
-                    squares[target] = Piece.Rook | ColorToMove;
-                    break;
-                case Piece.Knight:
-                    squares[target] = Piece.Knight | ColorToMove;
-                    break;
-                case Piece.Bishop:
-                    squares[target] = Piece.Bishop | ColorToMove;
-                    break;
+                    squares[start] = Piece.None;
+                    epFile = -1;
+                }
             }
-            squares[start] = Piece.None;
-            epFile = -1;
         }
     }
 }

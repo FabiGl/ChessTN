@@ -32,6 +32,7 @@ namespace Chess
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.colorButtonL = new System.Windows.Forms.Button();
             this.colorButtonD = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // colorButtonL
@@ -56,10 +57,22 @@ namespace Chess
             this.colorButtonD.UseVisualStyleBackColor = true;
             this.colorButtonD.Click += new System.EventHandler(this.colorButtonD_Click);
             // 
+            // button1
+            // 
+            this.button1.Font = new System.Drawing.Font("Calibri", 18F);
+            this.button1.Location = new System.Drawing.Point(192, 952);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(505, 131);
+            this.button1.TabIndex = 2;
+            this.button1.Text = "Apply";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // SettingsMenu
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(878, 1144);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.colorButtonD);
             this.Controls.Add(this.colorButtonL);
             this.Name = "SettingsMenu";
@@ -73,5 +86,6 @@ namespace Chess
         private System.Windows.Forms.ColorDialog colorDialog1;
         private System.Windows.Forms.Button colorButtonL;
         private System.Windows.Forms.Button colorButtonD;
+        private System.Windows.Forms.Button button1;
     }
 }

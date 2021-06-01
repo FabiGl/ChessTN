@@ -25,6 +25,7 @@ namespace Chess
         {
             Game.mode = 2;
             this.Hide();
+            Game.CreateInterface();
             Game.ShowDialog();
             this.Close();
         }
@@ -33,6 +34,7 @@ namespace Chess
         {
             Game.mode = 1;
             this.Hide();
+            Game.CreateInterface();
             Game.ShowDialog();
             this.Close();
         }

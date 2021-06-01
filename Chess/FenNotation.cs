@@ -19,6 +19,7 @@ namespace Chess
 		};
 
 		public const string startFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+		//public const string startFen = "r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1"; //to test castling
 
 		// Load position from fen string
 		public static LoadedPositionInfo PositionFromFen(string fen)

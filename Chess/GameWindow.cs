@@ -35,7 +35,6 @@ namespace Chess
         public GameWindow(int mode)
         {
             InitializeComponent();
-            CreateInterface();
             this.mode = mode;
             UpdateCaptures();
         }

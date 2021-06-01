@@ -5,11 +5,7 @@ namespace Chess
 {
     public class MoveGenerator
     {
-        int[] Offsets = new int[] { -9, -8, -7, -1, 1, 7, 8, 9};
-        int[] simulatedBoard = new int[64];
-        int[] backupBoard = new int[64];
         public List<Move> moves;
-        public List<Move> backupMoves;
         public static Board board;
         int friendlyColor;
         public void AddBoard(Board b)
@@ -17,9 +13,8 @@ namespace Chess
             board = b;
         }
 
-        public List<Move> GenerateMoves () // Pseudo Legale Moves (z.B. den König selbst in ein Schach zu bewegen wird nicht verhindert.) Mögliche lösung: Alle moves simulieren und schauen ob einer als target das Feld des Königs enthält
+        public List<Move> GenerateMoves() // Pseudo Legale Moves (z.B. den König selbst in ein Schach zu bewegen wird nicht verhindert.) Mögliche lösung: Alle moves simulieren und schauen ob einer als target das Feld des Königs enthält
         {
-            simulatedBoard = board.squares;
             friendlyColor = board.ColorToMove;
             
             moves = new List<Move>();
@@ -31,27 +26,27 @@ namespace Chess
                 {
                     if (Piece.IsSlidingPiece(piece))
                     {
-                        GenerateSlidingMoves(startSquare, piece);
+                        GenerateSlidingMoves(startSquare, piece, moves);
                     }
                     else if (Piece.IsType(piece, Piece.King))
                     {
-                        GenerateKingMoves(startSquare);
+                        GenerateKingMoves(startSquare, moves);
                     }
                     else if (Piece.IsType(piece, Piece.Pawn))
                     {
-                        GeneratePawnMoves(startSquare);
+                        GeneratePawnMoves(startSquare, moves);
                     }
                     else if (Piece.IsType(piece, Piece.Knight))
                     {
-                        GenerateKnightMoves(startSquare);
+                        GenerateKnightMoves(startSquare, moves);
                     }
                 }
             }
-
+            //GenerateFullyLegalMoves(moves);
             return moves;
         }
 
-        public void GenerateSlidingMoves(int startSquare, int piece)
+        public void GenerateSlidingMoves(int startSquare, int piece, List<Move> moves)
         {
             int startDir = (Piece.IsType(piece, Piece.Bishop)) ? 4 : 0;
             int endDir = (Piece.IsType(piece, Piece.Rook)) ? 4 : 8;
@@ -66,10 +61,12 @@ namespace Chess
                     if (Piece.IsColor(pieceOnTargetSquare, friendlyColor))
                         break;
                     moves.Add(new Move(startSquare, targetSquare, board));
+                    if (!Piece.IsType(pieceOnTargetSquare, Piece.None))
+                        break;
                 }
             }
         }
-        public void GenerateKingMoves(int startSquare)
+        public void GenerateKingMoves(int startSquare, List<Move> moves)
         {
             for (int direction = 0; direction < 8; direction++)
             {
@@ -118,7 +115,7 @@ namespace Chess
                 }
             }
         }
-        public void GeneratePawnMoves(int startSquare)
+        public void GeneratePawnMoves(int startSquare, List<Move> moves)
         {
             int targetSquare = 0;
             int offsetInvert;
@@ -143,8 +140,9 @@ namespace Chess
             }
             for (int i = 1; i < 3; i++)
             {
-                targetSquare = startSquare + PrecomputedData.pawnOffsets[i] * offsetInvert;
-                if (targetSquare < 64 && targetSquare > -1)
+                int offset = PrecomputedData.pawnOffsets[i] * offsetInvert;
+                targetSquare = startSquare + offset;
+                if (targetSquare < 64 && targetSquare > -1 && !((offset == -9 || offset == 7) && PrecomputedData.numSquaresToEdge[startSquare][2] == 0) && !((offset == 9 || offset == -7) && PrecomputedData.numSquaresToEdge[startSquare][3] == 0))
                 {
                     int pieceOnTargetSquare = board.squares[targetSquare];
 
@@ -176,7 +174,7 @@ namespace Chess
                 }
             }
         }
-        public void GenerateKnightMoves(int startSquare)
+        public void GenerateKnightMoves(int startSquare, List<Move> moves)
         {
             for (int direction = 0; direction < 8; direction++)
             {
@@ -190,6 +188,103 @@ namespace Chess
                     moves.Add(new Move(startSquare, targetSquare, board));
                 }
             }
+        }
+
+        #region public void GenerateFullyLegalMoves(List<Move> moves)
+        /*public void GenerateFullyLegalMoves(List<Move> moves)
+        {
+            foreach(Move m in moves)
+            {
+                if (GenerateMoves(m) == false)
+                {
+                    moves.Remove(m);
+                }
+            }
+
+            board.ColorToMove = board.ColorToMove ^ Piece.colorMask;
+            board.whiteToMove = !board.whiteToMove;
+        }
+        public bool GenerateMoves(Move move)
+        {
+
+            board.ColorToMove = board.ColorToMove ^ Piece.colorMask;
+            board.whiteToMove = !board.whiteToMove;
+            simulatedBoard = board.squares;
+            board.PlayMove(ref simulatedBoard, move, false);
+
+            bool legal = true;
+            List<Move> possibleMoves = new List<Move>();
+
+
+            for (int startSquare = 0; startSquare < 64; startSquare++)
+            {
+                int piece = board.squares[startSquare];
+                if (Piece.IsColor(piece, board.ColorToMove))
+                {
+                    if (Piece.IsSlidingPiece(piece))
+                    {
+                        GenerateSlidingMoves(startSquare, piece, possibleMoves);
+                    }
+                    else if (Piece.IsType(piece, Piece.King))
+                    {
+                        GenerateKingMoves(startSquare, possibleMoves);
+                    }
+                    else if (Piece.IsType(piece, Piece.Pawn))
+                    {
+                        GeneratePawnMoves(startSquare, possibleMoves);
+                    }
+                    else if (Piece.IsType(piece, Piece.Knight))
+                    {
+                        GenerateKnightMoves(startSquare, possibleMoves);
+                    }
+                }
+            }
+            foreach (Move m in moves)
+            {
+                switch(board.ColorToMove)
+                {
+                    case Piece.White:
+                        legal = (m.targetSquare == board.kingSquares[0]) ? false : true;
+                        break;
+                    case Piece.Black:
+                        legal = (m.targetSquare == board.kingSquares[1]) ? false : true;
+                        break;
+                }
+            }
+
+            return legal;
+        }*/
+        #endregion
+        public List<Move> GenerateAIMoves() // Pseudo Legale Moves (z.B. den König selbst in ein Schach zu bewegen wird nicht verhindert.) Mögliche lösung: Alle moves simulieren und schauen ob einer als target das Feld des Königs enthält
+        {
+            friendlyColor = Piece.Black;
+
+            moves = new List<Move>();
+
+            for (int startSquare = 0; startSquare < 64; startSquare++)
+            {
+                int piece = board.squares[startSquare];
+                if (Piece.IsColor(piece, board.ColorToMove))
+                {
+                    if (Piece.IsSlidingPiece(piece))
+                    {
+                        GenerateSlidingMoves(startSquare, piece, moves);
+                    }
+                    else if (Piece.IsType(piece, Piece.King))
+                    {
+                        GenerateKingMoves(startSquare, moves);
+                    }
+                    else if (Piece.IsType(piece, Piece.Pawn))
+                    {
+                        GeneratePawnMoves(startSquare, moves);
+                    }
+                    else if (Piece.IsType(piece, Piece.Knight))
+                    {
+                        GenerateKnightMoves(startSquare, moves);
+                    }
+                }
+            }
+            return moves;
         }
     }
 }

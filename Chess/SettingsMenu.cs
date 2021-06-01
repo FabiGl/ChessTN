@@ -35,5 +35,10 @@ namespace Chess
                 Game.darkColor = colorDialog1.Color;
             }
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

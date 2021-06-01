@@ -178,6 +178,7 @@ namespace Chess
             // GameWindow
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(1578, 844);
             this.Controls.Add(this.turnHistoryTB);
             this.Controls.Add(this.tmLabel);

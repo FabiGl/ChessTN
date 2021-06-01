@@ -58,7 +58,6 @@ namespace Chess
             rookImage.Image = Image.FromFile(pathRook);
             knightImage.Image = Image.FromFile(pathKnight);
             bishopImage.Image = Image.FromFile(pathBishop);
-            MessageBox.Show("hi");
         }
     }
 }
